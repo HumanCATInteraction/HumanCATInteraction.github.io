@@ -45,8 +45,8 @@ function App() {
             </div>
 
             <div className="headerPetsLabel">
-              <div className="petName">Mochi</div>
-              <div className="petTitle">Chief Purring Officer</div>
+              <div className="petName">Yuanyuan</div>
+              <div className="petTitle">by: Michael Yin</div>
             </div>
           </div>
           <div className="headerLogo">

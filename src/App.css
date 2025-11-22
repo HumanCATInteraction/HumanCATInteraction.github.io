@@ -31,7 +31,7 @@ body {
 }
 
 .header {
-  background-image: url("bg.png");
+  background-image: url("/bg.png");
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -266,4 +266,96 @@ p {
 .navItem:hover {
   opacity: 0.7;
   cursor: pointer;
+}
+
+/* ----------------------------- */
+/*   MOBILE VERSION (<=768px)    */
+/* ----------------------------- */
+@media (max-width: 768px) {
+
+  /* Hide navbar */
+  .navBar {
+    display: none;
+  }
+
+  .headerPetsFrame {
+    opacity: 0%;
+  }
+
+  /* Remove decorative lines */
+  .line {
+    display: none;
+  }
+
+  /* Stack header content vertically */
+  .headerContent {
+    flex-direction: column;     /* vertical stack */
+    height: auto;               /* let content expand */
+    width: 90%;
+    margin-top: 20px;
+    align-items: center;
+  }
+
+  .headerPets {
+    order: 2;
+    width: 100%;
+    height: auto;
+    margin-bottom: 0px;
+    margin-top: -50px;
+  }
+
+  .headerLogo {
+    order: 1;
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .headerLogoImage {
+    width: 90%;
+  }
+
+  /* Adjust header height so mobile users see content properly */
+  .header {
+    height: auto;
+    padding-bottom: 30px;
+    background-size: cover;  /* better for mobile than 100% 100% */
+  }
+
+  /* Move and shrink label so it fits nicely under the pet */
+  .headerPetsLabel {
+    position: relative;         /* no longer absolute */
+    margin: 10px auto 0 auto;
+    right: auto;
+    left: auto;
+    text-align: center;
+    width: fit-content;
+    padding: 6px 10px;
+    border-width: 1px;
+  }
+
+  /* Reduce petWrapper size a bit for mobile */
+  .petWrapper {
+    width: 70%;
+    height: 70%;
+    top: 15%;
+  }
+
+  /* Reduce pet frame size */
+  .headerPetsFrame {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Inner content width */
+  .innerContent {
+    width: 90%;
+  }
+
+  h2 {
+    margin-top: 20px;
+  }
+
 }

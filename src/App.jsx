@@ -12,6 +12,7 @@ function App() {
         <div className="navBar">
           <div className="navName">
             <img className="navLogoImage" src="/Logo.png" alt="logo"></img>
+            <img className="navLogoImage" src="/chi.png" alt="logo"></img>
           </div>
           <div className="navOptions">
             <a href="#about" className="navItem">
@@ -30,9 +31,9 @@ function App() {
               href="https://forms.gle/8NdHidKu19AF1oVW6"
               target="_blank"
               rel="noreferrer"
-              className="navItem"
+              className="navItem2"
             >
-              Contribute a Pet Photo
+             Contribute a Photo!
             </a>
           </div>
         </div>
@@ -65,8 +66,8 @@ function App() {
             <img className="line" src="/line.png" alt="fulltitle"></img>
             <p>
               {" "}
-              This meet-up aims to bring together researchers, students, and pet
-              enthusiasts to explore how living with pets influences our daily
+              The Human-CAT Interaction Meet-up at <strong> CHI 2026</strong> aims to bring together researchers, students, and pet
+              enthusiasts to explore how living with pets (of any kind!) influences our daily
               lives and how technology can enhance these relationships. Many
               graduate students, especially those studying abroad, often turn to
               pets for companionship in the face of cultural differences or
@@ -98,7 +99,7 @@ function App() {
                 {
                   name: "Michael Yin",
                   link: "https://mikeyin.xyz",
-                  img: "/michael.png",
+                  img: "/michael.jpg",
                   school: "University of British Columbia",
                 },
                 {
@@ -110,25 +111,25 @@ function App() {
                 {
                   name: "Angela Chiang",
                   link: "https://www.linkedin.com/in/a-hc-chiang/",
-                  img: "/angela.png",
+                  img: "/dog.png",
                   school: "University of British Columbia",
                 },
                 {
                   name: "Xinchang Huang",
                   link: "https://xincheng.me/",
-                  img: "/xincheng.png",
+                  img: "/xincheng.jpeg",
                   school: "University of British Columbia",
                 },
                 {
                   name: "Preeti Vyas",
                   link: "https://www.cs.ubc.ca/~pv/",
-                  img: "/preeti.png",
+                  img: "/dog.png",
                   school: "University of British Columbia",
                 },
                 {
                   name: "Robert Xiao",
                   link: "https://www.robertxiao.ca/",
-                  img: "/robert.png",
+                  img: "/robert.jpg",
                   school: "University of British Columbia",
                 },
               ].map((o) => (

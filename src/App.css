@@ -69,12 +69,18 @@ body {
   /* display: flex;
   align-items: center;
   flex-direction: center;
-} */ */
+} */
 
 .navName {
   display: flex;
   align-items: center;
-  flex-direction: center;
+  gap: 10px;
+  /* flex-direction: column; */
+  /* justify-content: center; */
+  /* border: 1px solid red; */
+  height: 60%;
+  min-height: 10px;
+  margin-right: 80px
 }
 
 .line{
@@ -114,6 +120,7 @@ body {
   width: 80%;
   align-items: center;
   justify-content: center;
+  
 }
 
 .headerPetsFrame {
@@ -129,7 +136,7 @@ body {
   width: 60%;
   height: 60%;
   transform: translateX(-50%);
-  overflow: hidden;        /* <== CROPS */
+  overflow: hidden;      
   border-radius: 10%;
   z-index: 2;
 }
@@ -137,8 +144,8 @@ body {
 .headerPetsPet {
   width: 100%;
   height: 100%;
-  object-fit: cover;       /* <== NO STRETCH, fill the space */
-  object-position: center; /* <== CENTER */
+  object-fit: cover;       
+  object-position: center; 
 }
 
 .headerPetsLabel {
@@ -148,8 +155,9 @@ body {
   text-align: center;
   background-color: white;
   border: 2px solid black;
-  padding: 5px;
+  padding: 10px;
   z-index: 10;
+  border-radius: 10px;
 }
 
 .petName {
@@ -219,8 +227,10 @@ p {
 }
 
 .navLogoImage {
-  height: 60%;
-  width: 60%;
+  height: 20%;
+  /* width: 20%; */
+  margin-left: 10px;
+  min-height: 50px;
 }
 
 .organizerName {
@@ -268,15 +278,52 @@ p {
   cursor: pointer;
 }
 
+.navItem2 {
+  font-size: 1.1rem;
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.navItem2:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+
 /* ----------------------------- */
 /*   MOBILE VERSION (<=768px)    */
 /* ----------------------------- */
 @media (max-width: 768px) {
 
   /* Hide navbar */
-  .navBar {
+  .navItem {
+    display: none;
+    
+  }
+
+  .navName {
     display: none;
   }
+
+  .navItem2 {
+    background-color: aliceblue;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin: auto;
+  }
+
+  .navLogoImage{
+    display: none;
+  }
+  
+  .navBar {
+    order: 1;
+    justify-content: center;
+  }
+
 
   .headerPetsFrame {
     opacity: 0%;
@@ -317,14 +364,12 @@ p {
     width: 90%;
   }
 
-  /* Adjust header height so mobile users see content properly */
   .header {
     height: auto;
     padding-bottom: 30px;
     background-size: cover;  /* better for mobile than 100% 100% */
   }
 
-  /* Move and shrink label so it fits nicely under the pet */
   .headerPetsLabel {
     position: relative;         /* no longer absolute */
     margin: 10px auto 0 auto;
@@ -334,6 +379,7 @@ p {
     width: fit-content;
     padding: 6px 10px;
     border-width: 1px;
+    border-radius: 10px;
   }
 
   /* Reduce petWrapper size a bit for mobile */

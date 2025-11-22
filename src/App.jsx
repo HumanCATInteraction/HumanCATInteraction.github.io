@@ -27,7 +27,7 @@ function App() {
               Participate
             </a>
             <a
-              href="https://forms.gle/your-google-form-link"
+              href="https://forms.gle/8NdHidKu19AF1oVW6"
               target="_blank"
               rel="noreferrer"
               className="navItem"
@@ -163,7 +163,15 @@ function App() {
             <img className="line" src="/line.png" alt="fulltitle"></img>
             <p>
               Anyone attending CHI 2026 can participate! To help us plan for the
-              event, please fill out the interest form here.{" "}
+              event, please fill out the interest form{" "}
+              <a
+                href="https://forms.gle/tJR5UuvvXwfzgxqe8"
+                target="_blank"
+                rel="noreferrer"
+              >
+                here
+              </a>
+              .{" "}
             </p>
           </div>
         </div>

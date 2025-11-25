@@ -72,7 +72,7 @@ function App() {
               graduate students, especially those studying abroad, often turn to
               pets for companionship in the face of cultural differences or
               mental health support. <br></br>
-              <br></br>Yet pets are also demanding, needing attention and
+              <br></br>Yet, pets are also demanding, needing attention and
               specific care, which can clash with deep, uninterrupted academic
               work. As HCI researchers, we often design technologies primarily
               for humans, but what if we designed for both humans and pets? In
@@ -115,7 +115,7 @@ function App() {
                   school: "University of British Columbia",
                 },
                 {
-                  name: "Xinchang Huang",
+                  name: "Xincheng Huang",
                   link: "https://xincheng.me/",
                   img: "/xincheng.jpeg",
                   school: "University of British Columbia",

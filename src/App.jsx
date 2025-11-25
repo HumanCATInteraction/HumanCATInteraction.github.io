@@ -123,7 +123,7 @@ function App() {
                 {
                   name: "Preeti Vyas",
                   link: "https://www.cs.ubc.ca/~pv/",
-                  img: "/dog.png",
+                  img: "/preeti.jpeg",
                   school: "University of British Columbia",
                 },
                 {

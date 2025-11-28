@@ -85,9 +85,12 @@ function App() {
                   />
                 ))}
               </div>
-              <div className="headerPetsLabel">
-                <div className="petName">{currentPet.Pet}</div>
-                <div className="petTitle">by: {currentPet.Owner}</div>
+              <div
+                className={`headerPetsLabel`}
+                key={current} 
+              >
+                <div className="petName fadeLabel">{currentPet.Pet}</div>
+                <div className="petTitle fadeLabel">by: {currentPet.Owner}</div>
               </div>
             </div>
           )}

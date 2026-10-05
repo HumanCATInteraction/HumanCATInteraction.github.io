@@ -91,6 +91,7 @@ function App() {
               >
                 <div className="petName fadeLabel">{currentPet.Pet}</div>
                 <div className="petTitle fadeLabel">by: {currentPet.Owner}</div>
+                <div className="petSource fadeLabel">CHI 2026 pet gallery</div>
               </div>
             </div>
           )}
@@ -131,10 +132,9 @@ function App() {
               welfare?
               <br></br>
               <br></br>
-              The meet-up is an open, drop-in event: come for ten minutes or the
-              whole session, share your pet stories, make new friends, and help
-              us build a growing public record of design opportunities for
-              human-pet technology.
+              The meet-up is open and drop-in: share your pet stories, make new
+              friends, and help us build a growing public record of design
+              opportunities for human-pet technology.
             </p>
           </div>
           <div className="lastYear" id="last-year">
@@ -142,8 +142,8 @@ function App() {
             <img className="line" src="/line.png" alt="line"></img>
             <p>
               The 1st Human-CAT Interaction Meet-up was a great success, with
-              60&ndash;70 attendees, roughly double what we expected! Ideas that
-              came up during and after the discussions included:
+              60&ndash;70 attendees, roughly double what we expected! Ideas we
+              drew from the discussions, during and after the event, included:
             </p>
             <ul className="ideaList">
               <li>Co-play across humans and pets, including play across physical distance</li>
@@ -153,8 +153,7 @@ function App() {
             </ul>
             <p>
               Because people kept arriving and leaving throughout the session,
-              this year&apos;s meet-up runs as parallel, drop-in stations, so you
-              can join at any point.
+              this year we replace the fixed schedule with parallel stations.
             </p>
           </div>
           <div className="organizers" id="organizers">
@@ -246,7 +245,7 @@ function App() {
                 {
                   title: "Pet gallery & stickers",
                   timing: "Continuous",
-                  text: "Submit your pet via a QR code to join the projected gallery, and get a printed CHI 2027 sticker of your pet within minutes.",
+                  text: "Submit your pet via a QR code to join the projected gallery, and get a printed sticker with the CHI 2027 logo within minutes.",
                 },
                 {
                   title: "Design wall",

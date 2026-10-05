@@ -1,8 +1,122 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import Papa from "papaparse";
 
-function App() {
+const PHOTO_FORM = "https://forms.gle/8NdHidKu19AF1oVW6";
+const CONTACT = "humancatinteractionmeetup@gmail.com";
+
+const ORGANIZERS = [
+  { name: "Elise Shen", link: "https://elisexinranshen.github.io/", img: "/elise.png", school: "University of Toronto" },
+  { name: "Michael Yin", link: "https://mikeyin.xyz", img: "/michael.jpg", school: "University of British Columbia" },
+  { name: "Hye-Young Jo", link: "https://hyeyoungjo.com", img: "/hyeyoung.jpg", school: "University of Colorado Boulder" },
+  { name: "Xincheng Huang", link: "https://xincheng.me/", img: "/xincheng.jpeg", school: "University of British Columbia" },
+  { name: "Samuel Rhys Cox", link: "https://www.samcox.eu/", img: "/sam.jpg", school: "Aalborg University" },
+  { name: "Robert Xiao", link: "https://www.robertxiao.ca/", img: "/robert.jpg", school: "University of British Columbia" },
+];
+
+const ACTIVITIES = [
+  {
+    title: "Welcome & networking",
+    timing: "Continuous",
+    text: "Organizers greet arrivals, hand out prompt cards with conversation starters, and introduce newcomers to a group.",
+  },
+  {
+    title: "Pet gallery & stickers",
+    timing: "Continuous",
+    text: "Submit your pet via a QR code to join the projected gallery, and get a printed sticker with the CHI 2027 logo within minutes.",
+  },
+  {
+    title: "Design wall",
+    timing: "Continuous",
+    text: "Draw or write ideas for pet technologies on cards, post them on the wall, and respond to others' ideas. We publish the wall here afterwards.",
+  },
+  {
+    title: "Round-ups",
+    timing: "45 & 75 min",
+    text: "At the midpoint, we read out ideas and responses. In the final 15 minutes, everyone dot-votes and we award small prizes!",
+  },
+];
+
+const IDEAS = [
+  "Co-play across humans and pets, including play across physical distance",
+  "Unobtrusive sensing for everyday pet health",
+  "Interfaces giving pets more agency over doors, feeders, and spaces",
+  "Technologies supporting memorialization after a pet's death",
+];
+
+const prefersReducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Haru walks along the bottom of the hero, sits for one idle loop, and walks on.
+// Walk speed matches the source footage: 0.053 sprite-heights per second.
+const WALK_SPEED = 0.053;
+const IDLE_MS = 5750;
+
+function Haru() {
+  const ref = useRef(null);
+  const [sitting, setSitting] = useState(prefersReducedMotion);
+  const [bubble, setBubble] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    const stage = el.parentElement;
+    if (prefersReducedMotion()) {
+      el.style.transform = `translateX(${stage.offsetWidth * 0.7}px)`;
+      return;
+    }
+    let x = -el.offsetWidth;
+    let stopAt = stage.offsetWidth * (0.55 + Math.random() * 0.25);
+    let pausedUntil = 0;
+    let prev = performance.now();
+    let raf;
+    const tick = (now) => {
+      const dt = Math.min(now - prev, 100) / 1000;
+      prev = now;
+      if (pausedUntil && now >= pausedUntil) {
+        pausedUntil = 0;
+        setSitting(false);
+      }
+      if (!pausedUntil) {
+        x += WALK_SPEED * el.offsetHeight * dt;
+        if (stopAt && x + el.offsetWidth / 2 >= stopAt) {
+          stopAt = 0;
+          pausedUntil = now + IDLE_MS;
+          setSitting(true);
+        }
+        if (x > stage.offsetWidth) {
+          x = -el.offsetWidth;
+          stopAt = stage.offsetWidth * (0.2 + Math.random() * 0.6);
+        }
+        el.style.transform = `translateX(${x}px)`;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    if (!bubble) return;
+    const t = setTimeout(() => setBubble(false), 2200);
+    return () => clearTimeout(t);
+  }, [bubble]);
+
+  return (
+    <button
+      ref={ref}
+      type="button"
+      className={`haru ${sitting ? "sitting" : ""}`}
+      onClick={() => setBubble(true)}
+      aria-label="Haru, Hye-Young's cat"
+    >
+      <img className="haruWalk" src="/haru-walk.webp" alt="" />
+      <img className="haruSit" src="/haru-idle.webp" alt="" />
+      {bubble && <span className="haruBubble">Hi, I'm Haru!</span>}
+    </button>
+  );
+}
+
+function Gallery() {
   const [pets, setPets] = useState([]);
   const [current, setCurrent] = useState(0);
 
@@ -10,290 +124,194 @@ function App() {
     Papa.parse("/petList.csv", {
       download: true,
       header: true,
+      skipEmptyLines: true,
       complete: (result) => {
-        const data = result.data;
-        setPets(data);
-
-        if (data.length > 0) {
-          const rand = Math.floor(Math.random() * data.length);
-          setCurrent(rand);
-        }
+        setPets(result.data);
+        setCurrent(Math.floor(Math.random() * result.data.length));
       },
     });
   }, []);
 
   useEffect(() => {
     if (pets.length === 0) return;
-
-    const interval = setInterval(() => {
-      setCurrent((c) => (c + 1) % pets.length);
-    }, 8000);
-
+    const interval = setInterval(() => setCurrent((c) => (c + 1) % pets.length), 5000);
     return () => clearInterval(interval);
   }, [pets]);
 
-  const currentPet = pets[current];
+  const pet = pets[current];
+  if (!pet) return null;
 
   return (
-    <div>
-      <div className="header">
-        <div className="navBar">
-          <div className="navName">
-            <img className="navLogoImage" src="/Logo.png" alt="logo"></img>
-            <img className="navLogoImage" src="/chi2027.svg" alt="CHI 2027"></img>
-          </div>
-          <div className="navOptions">
-            <a href="#about" className="navItem">
-              About
-            </a>
-            <a href="#last-year" className="navItem">
-              2026
-            </a>
-            <a href="#organizers" className="navItem">
-              Organizers
-            </a>
-            <a href="#agenda" className="navItem">
-              Agenda
-            </a>
-            <a href="#participate" className="navItem">
-              Participate
-            </a>
-            <a
-              href="https://forms.gle/8NdHidKu19AF1oVW6"
-              target="_blank"
-              rel="noreferrer"
-              className="navItem2"
-            >
-              Contribute a Photo!
-            </a>
-          </div>
-        </div>
-        <div className="headerContent">
-          {currentPet && (
-            <div className="headerPets">
-              <img className="headerPetsFrame" src="/frame.png" />
-
-              <div className="petWrapper">
-                {pets.map((pet, idx) => (
-                  <img
-                    key={idx}
-                    src={`/pets/${pet.File}`}
-                    alt={pet.Pet}
-                    className={`headerPetsPet ${
-                      idx === current ? "visible" : "hidden"
-                    }`}
-                  />
-                ))}
-              </div>
-              <div
-                className={`headerPetsLabel`}
-                key={current} 
-              >
-                <div className="petName fadeLabel">{currentPet.Pet}</div>
-                <div className="petTitle fadeLabel">by: {currentPet.Owner}</div>
-                <div className="petSource fadeLabel">CHI 2026 pet gallery</div>
-              </div>
-            </div>
-          )}
-          <div className="headerLogo">
-            <img
-              className="headerLogoImage"
-              src="/LogoFull.png"
-              alt="fulltitle"
-            ></img>
-          </div>
-        </div>
+    <figure className="gallery">
+      <div className="galleryPhoto">
+        {pets.map((p, idx) => (
+          <img
+            key={p.File}
+            src={`/pets/${p.File.trim()}`}
+            alt={p.Pet}
+            className={idx === current ? "visible" : ""}
+          />
+        ))}
       </div>
-      <div className="content">
-        <div className="innerContent">
-          <div className="about" id="about">
-            <h2> Overview </h2>
-            <img className="line" src="/line.png" alt="line"></img>
-            <p className="eventBadge">
-              Proposed for <strong>CHI 2027</strong> &middot; May 10&ndash;14,
-              2027 &middot; Pittsburgh, PA, USA
+      <figcaption key={current}>
+        <strong>{pet.Pet}</strong> by {pet.Owner}
+        <span className="galleryNote">From the CHI 2026 pet gallery</span>
+      </figcaption>
+    </figure>
+  );
+}
+
+function App() {
+  return (
+    <div className="page">
+      <header className="hero">
+        <nav className="nav">
+          <div className="navLogos">
+            <img src="/Logo.png" alt="Human-CAT logo" />
+            <img src="/chi2027.svg" alt="CHI 2027, May 10-14, Pittsburgh" />
+          </div>
+          <div className="navLinks">
+            <a href="#about">About</a>
+            <a href="#last-year">2026</a>
+            <a href="#organizers">Organizers</a>
+            <a href="#agenda">Agenda</a>
+            <a href="#participate">Participate</a>
+          </div>
+          <a className="button small" href={PHOTO_FORM} target="_blank" rel="noreferrer">
+            Contribute a Photo!
+          </a>
+        </nav>
+
+        <div className="heroBody">
+          <video
+            className="heroVideo"
+            src="/hero.mp4"
+            poster="/hero-poster.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-label="Human-CAT (Connection, Animals, Technology) Interaction Meet-Up, with the organizers' pets peeking over the title"
+          />
+          <p className="kicker">The 2nd Annual</p>
+          <p className="eventLine">
+            Proposed for <strong>CHI 2027</strong> · May 10–14, 2027 · Pittsburgh, PA, USA
+          </p>
+        </div>
+
+        <div className="walkway">
+          <Haru />
+        </div>
+      </header>
+
+      <main>
+        <section id="about" className="section">
+          <h2>Overview</h2>
+          <div className="prose">
+            <p>
+              The <strong>2nd Annual</strong> Human-CAT Interaction Meet-up brings together
+              researchers, students, and pet enthusiasts to explore how living with pets (of any
+              kind!) shapes our daily lives, and how technology can support relationships between
+              humans and pets. This year, we focus on technologies for shared activities, care,
+              communication, and wellbeing across physical, robotic, and digital pets, including
+              emerging technologies such as virtual reality and generative AI.
             </p>
             <p>
-              The <strong>2nd Annual</strong> Human-CAT Interaction Meet-up
-              brings together researchers, students, and pet enthusiasts to
-              explore how living with pets (of any kind!) shapes our daily lives,
-              and how technology can support relationships between humans and
-              pets. This year, we focus on technologies for shared activities,
-              care, communication, and wellbeing across physical, robotic, and
-              digital pets, including emerging technologies such as virtual
-              reality and generative AI.
-              <br></br>
-              <br></br>
-              Designing for pets raises questions that differ from designing for
-              humans alone. How can technology account for the needs,
-              preferences, and agency of both humans and animals? When should it
-              mediate a human-pet relationship, and when might it interfere? How
-              can systems support shared experiences while attending to animal
-              welfare?
-              <br></br>
-              <br></br>
-              The meet-up is open and drop-in: share your pet stories, make new
-              friends, and help us build a growing public record of design
-              opportunities for human-pet technology.
+              Designing for pets raises questions that differ from designing for humans alone. How
+              can technology account for the needs, preferences, and agency of both humans and
+              animals? When should it mediate a human-pet relationship, and when might it interfere?
+              How can systems support shared experiences while attending to animal welfare?
+            </p>
+            <p>
+              The meet-up is open and drop-in: share your pet stories, make new friends, and help us
+              build a growing public record of design opportunities for human-pet technology.
             </p>
           </div>
-          <div className="lastYear" id="last-year">
-            <h2> Last Year at CHI 2026 </h2>
-            <img className="line" src="/line.png" alt="line"></img>
-            <p>
-              The 1st Human-CAT Interaction Meet-up was a great success, with
-              60&ndash;70 attendees, roughly double what we expected! Ideas we
-              drew from the discussions, during and after the event, included:
-            </p>
-            <ul className="ideaList">
-              <li>Co-play across humans and pets, including play across physical distance</li>
-              <li>Unobtrusive sensing for everyday pet health</li>
-              <li>Interfaces giving pets more agency over doors, feeders, and spaces</li>
-              <li>Technologies supporting memorialization after a pet&apos;s death</li>
-            </ul>
-            <p>
-              Because people kept arriving and leaving throughout the session,
-              this year we replace the fixed schedule with parallel stations.
-            </p>
+        </section>
+
+        <section id="last-year" className="section">
+          <h2>Last Year at CHI 2026</h2>
+          <div className="lastYear">
+            <div className="prose">
+              <p>
+                The 1st Human-CAT Interaction Meet-up was a great success, with{" "}
+                <strong>60–70 attendees</strong>, roughly double what we expected! Ideas we drew from
+                the discussions, during and after the event, included:
+              </p>
+              <ul className="ideas">
+                {IDEAS.map((idea) => (
+                  <li key={idea}>{idea}</li>
+                ))}
+              </ul>
+              <p>
+                Because people kept arriving and leaving throughout the session, this year we replace
+                the fixed schedule with parallel stations.
+              </p>
+            </div>
+            <Gallery />
           </div>
-          <div className="organizers" id="organizers">
-            <h2>Organizers</h2>
-            <img className="line" src="/line.png" alt="line" />
+        </section>
+
+        <section id="organizers" className="section">
+          <h2>Organizers</h2>
+          <figure className="organizerPets">
             <img
-              className="organizerPets"
               src="/organizer-pets.jpg"
               alt="A collage of the organizers' pets: a white long-haired cat, a white Bichon Frise dog, a seal-point cat, a chicken, a tabby cat in a tree wearing a pink harness, and a virtual frog from the game Travel Frog."
             />
-            <p className="caption">
-              Our organizers&apos; pets, physical and digital.
-            </p>
-
-            <div className="organizerGrid">
-              {[
-                {
-                  name: "Elise Shen",
-                  link: "https://elisexinranshen.github.io/",
-                  img: "/elise.png",
-                  school: "University of Toronto",
-                },
-                {
-                  name: "Michael Yin",
-                  link: "https://mikeyin.xyz",
-                  img: "/michael.jpg",
-                  school: "University of British Columbia",
-                },
-                {
-                  name: "Hye-Young Jo",
-                  link: "https://hyeyoungjo.com",
-                  img: "/hyeyoung.jpg",
-                  school: "University of Colorado Boulder",
-                },
-                {
-                  name: "Xincheng Huang",
-                  link: "https://xincheng.me/",
-                  img: "/xincheng.jpeg",
-                  school: "University of British Columbia",
-                },
-                {
-                  name: "Samuel Rhys Cox",
-                  link: "https://www.samcox.eu/",
-                  img: "/sam.jpg",
-                  school: "Aalborg University",
-                },
-                {
-                  name: "Robert Xiao",
-                  link: "https://www.robertxiao.ca/",
-                  img: "/robert.jpg",
-                  school: "University of British Columbia",
-                },
-              ].map((o) => (
-                <div className="organizerCard" key={o.name}>
-                  <img className="organizerPic" src={o.img} alt={o.name} />
-
-                  {o.link ? (
-                    <a
-                      className="organizerName"
-                      href={o.link}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {o.name}
-                    </a>
-                  ) : (
-                    <span className="organizerName">{o.name}</span>
-                  )}
-
-                  <div className="organizerSchool">{o.school}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="agenda" id="agenda">
-            <h2> Planned Agenda </h2>
-            <img className="line" src="/line.png" alt="line"></img>
-            <p>
-              Stations run in parallel for the full 90 minutes, so you can join
-              or leave at any point. No preparation needed!
-            </p>
-            <div className="activityGrid">
-              {[
-                {
-                  title: "Welcome & networking",
-                  timing: "Continuous",
-                  text: "Organizers greet arrivals, hand out prompt cards with conversation starters, and introduce newcomers to a group.",
-                },
-                {
-                  title: "Pet gallery & stickers",
-                  timing: "Continuous",
-                  text: "Submit your pet via a QR code to join the projected gallery, and get a printed sticker with the CHI 2027 logo within minutes.",
-                },
-                {
-                  title: "Design wall",
-                  timing: "Continuous",
-                  text: "Draw or write ideas for pet technologies on cards, post them on the wall, and respond to others' ideas. We publish the wall here afterwards.",
-                },
-                {
-                  title: "Round-ups",
-                  timing: "45 & 75 min",
-                  text: "At the midpoint, we read out ideas and responses. In the final 15 minutes, everyone dot-votes and we award small prizes!",
-                },
-              ].map((a) => (
-                <div className="activityCard" key={a.title}>
-                  <div className="activityTiming">{a.timing}</div>
-                  <div className="activityTitle">{a.title}</div>
-                  <div className="activityText">{a.text}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="participate" id="participate">
-            <h2> Want to Participate? </h2>
-            <img className="line" src="/line.png" alt="line"></img>
-            <p>
-              Anyone attending CHI 2027 can participate, with or without a pet!
-              Before the meet-up, you can{" "}
-              <a
-                href="https://forms.gle/8NdHidKu19AF1oVW6"
-                target="_blank"
-                rel="noreferrer"
-              >
-                contribute a photo
-              </a>{" "}
-              of your pet (physical, digital, or robotic), a short account of an
-              activity you share with them, and a technology you wish you had.
-              Submitted pets appear on our rolling display during the session.
-              This is entirely optional.
-              <br></br>
-              <br></br>
-              Questions or accessibility needs? Email us at{" "}
-              <a href="mailto:humancatinteractionmeetup@gmail.com">
-                humancatinteractionmeetup@gmail.com
+            <figcaption>Our organizers' pets, physical and digital.</figcaption>
+          </figure>
+          <div className="organizerGrid">
+            {ORGANIZERS.map((o) => (
+              <a className="organizer" key={o.name} href={o.link} target="_blank" rel="noreferrer">
+                <img src={o.img} alt="" />
+                <span className="organizerName">{o.name}</span>
+                <span className="organizerSchool">{o.school}</span>
               </a>
-              .
-            </p>
+            ))}
           </div>
-        </div>
-      </div>
+        </section>
+
+        <section id="agenda" className="section">
+          <h2>Planned Agenda</h2>
+          <p className="lead">
+            Stations run in parallel for the full 90 minutes, so you can join or leave at any point.
+            No preparation needed!
+          </p>
+          <div className="activityGrid">
+            {ACTIVITIES.map((a) => (
+              <div className="activity" key={a.title}>
+                <span className="activityTiming">{a.timing}</span>
+                <h3>{a.title}</h3>
+                <p>{a.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="participate" className="section">
+          <div className="participate">
+            <h2>Want to Participate?</h2>
+            <p>
+              Anyone attending CHI 2027 can participate, with or without a pet! Before the meet-up,
+              you can contribute a photo of your pet (physical, digital, or robotic), a short account
+              of an activity you share with them, and a technology you wish you had. Submitted pets
+              appear on our rolling display during the session. This is entirely optional.
+            </p>
+            <div className="participateActions">
+              <a className="button" href={PHOTO_FORM} target="_blank" rel="noreferrer">
+                Contribute a photo
+              </a>
+              <a className="button ghost" href={`mailto:${CONTACT}`}>
+                {CONTACT}
+              </a>
+            </div>
+            <p className="small">Questions or accessibility needs? Email us anytime.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer className="footer">Human-CAT Interaction Meet-Up · CHI 2027 · Pittsburgh</footer>
     </div>
   );
 }

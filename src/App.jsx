@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Papa from "papaparse";
 
@@ -43,78 +43,6 @@ const IDEAS = [
   "Interfaces giving pets more agency over doors, feeders, and spaces",
   "Technologies supporting memorialization after a pet's death",
 ];
-
-const prefersReducedMotion = () =>
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-// Haru walks along the bottom of the hero, sits for one idle loop, and walks on.
-// Walk speed matches the source footage: 0.053 sprite-heights per second.
-const WALK_SPEED = 0.053;
-const IDLE_MS = 5750;
-
-function Haru() {
-  const ref = useRef(null);
-  const [sitting, setSitting] = useState(prefersReducedMotion);
-  const [bubble, setBubble] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    const stage = el.parentElement;
-    if (prefersReducedMotion()) {
-      el.style.transform = `translateX(${stage.offsetWidth * 0.7}px)`;
-      return;
-    }
-    let x = -el.offsetWidth;
-    let stopAt = stage.offsetWidth * (0.55 + Math.random() * 0.25);
-    let pausedUntil = 0;
-    let prev = performance.now();
-    let raf;
-    const tick = (now) => {
-      const dt = Math.min(now - prev, 100) / 1000;
-      prev = now;
-      if (pausedUntil && now >= pausedUntil) {
-        pausedUntil = 0;
-        setSitting(false);
-      }
-      if (!pausedUntil) {
-        x += WALK_SPEED * el.offsetHeight * dt;
-        if (stopAt && x + el.offsetWidth / 2 >= stopAt) {
-          stopAt = 0;
-          pausedUntil = now + IDLE_MS;
-          setSitting(true);
-        }
-        if (x > stage.offsetWidth) {
-          x = -el.offsetWidth;
-          stopAt = stage.offsetWidth * (0.2 + Math.random() * 0.6);
-        }
-        el.style.transform = `translateX(${x}px)`;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  useEffect(() => {
-    if (!bubble) return;
-    const t = setTimeout(() => setBubble(false), 2200);
-    return () => clearTimeout(t);
-  }, [bubble]);
-
-  return (
-    <button
-      ref={ref}
-      type="button"
-      className={`haru ${sitting ? "sitting" : ""}`}
-      onClick={() => setBubble(true)}
-      aria-label="Haru, Hye-Young's cat"
-    >
-      <img className="haruWalk" src="/haru-walk.webp" alt="" />
-      <img className="haruSit" src="/haru-idle.webp" alt="" />
-      {bubble && <span className="haruBubble">Hi, I'm Haru!</span>}
-    </button>
-  );
-}
 
 function Gallery() {
   const [pets, setPets] = useState([]);
@@ -199,9 +127,6 @@ function App() {
           </p>
         </div>
 
-        <div className="walkway">
-          <Haru />
-        </div>
       </header>
 
       <main>

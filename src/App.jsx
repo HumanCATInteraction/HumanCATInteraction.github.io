@@ -197,8 +197,8 @@ function App() {
                 },
                 {
                   name: "Samuel Rhys Cox",
-                  link: null,
-                  img: "/dog.png",
+                  link: "https://www.samcox.eu/",
+                  img: "/sam.jpg",
                   school: "Aalborg University",
                 },
                 {
